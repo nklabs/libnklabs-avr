@@ -1,0 +1,41 @@
+PA7:0
+PB7:0
+PC7:0
+PD7:0
+
+reset_l
+aref
+vcc, avcc
+gnd, gnd
+xtal1, xtal2
+
+pd0: rxd
+pd1: txd
+
+pa7:0 analog inputs
+
+pb5: mosi
+pb6: miso
+pb7: sck
+pb4: ss_l
+
+pc0: scl
+pc1: sda
+
+- - - -
+save = SREG    Save flags
+_CLI()         Disable interrupts
+. . .
+SREG = save    Restore flags
+
+MCUCSR   hold reset reason
+- - - -
+i = PINB   read port B inputs
+
+DDRB = 1     Enable output bit 0
+  PORTB = 1   Set output bit 0 to 1
+  PORTB = 0   Set output bit 0 to 0
+BBRB = 0     Enable input bit 0
+  PORTB = 0   Bit 0 is high-Z
+  PORTB = 1   Bit 0 has pull-up
+- - - -
