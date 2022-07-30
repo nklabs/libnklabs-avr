@@ -43,7 +43,6 @@ char hello[] = "Hello, world\r\n";
 int main( void )
 {
    u08 led, i, j, k, l, dc, run, rundc;
-   char dat[10];
 
    outp(0xff,DDRB);            /* use all pins on PortB for output */
 
@@ -56,9 +55,6 @@ int main( void )
    UBRRL = (UBRR_VALUE);
    UCSRB = (1 << RXEN) | (1 << TXEN);
    UCSRC = (1 << URSEL) | (1 << USBS) | (3 << UCSZ0);
-
-   dat[0] = 'H';
-   dat[1] = 0;
 
    for (;;) {
        outp(~led, PORTB);      /* invert the output since a zero means: LED on */
@@ -88,14 +84,6 @@ int main( void )
           for (j=0; j<run;j++)   /* inner delay loop */
              for (l=0; l<16;l++) /* inner inner delay loop */
                 k++;                /* just do something - could also be a NOP */
-   myputc('H');
-   myputc('e');
-   myputc('l');
-   myputc('l');
-   myputc('o');
-   myputc('\r');
-   myputc('\n');
-   myputs(dat);
-   myputs(hello);
+   myputs("Hello, world!\r\n");
    }
 }
