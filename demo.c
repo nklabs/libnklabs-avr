@@ -16,9 +16,13 @@
 
 #include <avr/io.h>
 #include <compat/deprecated.h>
+#include <avr/interrupt.h>
 
-#define F_CPU 16000000UL
-#define BAUD 9600
+//#define F_CPU 16000000UL
+// STK500 supplied clock
+#define F_CPU 3686400UL
+
+#define BAUD 115200
 #define UBRR_VALUE ((F_CPU / (BAUD * 16UL)) - 1)
 
 typedef unsigned char  u08;
@@ -38,6 +42,22 @@ void myputs(const char *s)
     }
 }
 
+ISR(USART_RXC_vect)
+{
+    uint8_t d;
+    d = UDR;
+    ++d;
+    UDR = d;
+}
+
+uint16_t wallclock;
+
+ISR(TIMER2_COMP_vect)
+{
+    ++wallclock;
+    TIFR = (1 << OCF2);
+}
+
 char hello[] = "Hello, world\r\n";
 
 int main( void )
@@ -51,11 +71,23 @@ int main( void )
    run = 1;
    rundc = 0;
 
+
+   // Set up UART
    UBRRH = (UBRR_VALUE >> 8);
    UBRRL = (UBRR_VALUE);
-   UCSRB = (1 << RXEN) | (1 << TXEN);
+   UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
    UCSRC = (1 << URSEL) | (1 << USBS) | (3 << UCSZ0);
 
+   // Set up timer2
+   TCCR2 = (1 << WGM21) | (5 << CS20);
+   OCR2 = 28;
+   TIMSK = (1 << OCIE2);
+
+   // Enable interrupts
+   sei();
+
+
+   //myputs("Hello, world!\r\n");
    for (;;) {
        outp(~led, PORTB);      /* invert the output since a zero means: LED on */
        if (dc==0)
@@ -85,5 +117,9 @@ int main( void )
              for (l=0; l<16;l++) /* inner inner delay loop */
                 k++;                /* just do something - could also be a NOP */
    myputs("Hello, world!\r\n");
+
+   hello[0] = "0123456789ABCDEF"[0x0F & (wallclock >> 10)];
+   myputs(hello);
+
    }
 }

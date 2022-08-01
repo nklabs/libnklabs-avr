@@ -1,3 +1,23 @@
+Difficulty:
+  "avrdude" from "apt-get install" did not work on 18.04.  I needed to install from source (version 7.0)
+  still sometimes have mystery can't program problems with avrdude..
+
+  if the name you use in the ISR() does not exist, there is no warning- code will not be generated.  Instead
+  vector will be left as default, which is to jump to reset handler.
+
+- - -
+
+  To get a starting point for the linker script: supply -Wl,--verbose to gcc
+
+- - -
+New ATmega32: fuses select oscillator source, default is 1 MHz internal oscillator
+
+ But we need to set lfuse from 0xE1 to 0xE0 to use STK500 supplied clock, which is 3686400 ("3.68 MHz" from the documentation), which 
+ is an integer multiple of 115200
+
+- - -
+ATmega32 has: 32K Flash, 2K RAM, 1K EEPROM
+
 PA7:0
 PB7:0
 PC7:0
@@ -28,7 +48,7 @@ _CLI()         Disable interrupts
 . . .
 SREG = save    Restore flags
 
-MCUCSR   hold reset reason
+MCUCSR   holds reset reason
 - - - -
 i = PINB   read port B inputs
 
@@ -39,3 +59,16 @@ BBRB = 0     Enable input bit 0
   PORTB = 0   Bit 0 is high-Z
   PORTB = 1   Bit 0 has pull-up
 - - - -
+Other chips:
+  ATmega1284p: 128K flash, 16K RAM, 4K EEPROM
+  ATmega324pb   32K flash, 2K RAM, 1K EEPROM
+  ATmega328pb   64K flash, 4K RAM, 2K EEPROM
+  ATmega4809:   48K flash, 6K RAM, 256B EEPROM
+- - -
+Default fuse values:
+  hfuse 0x99
+  lfuse 0xE1
+
+What we want:
+  hfuse -> 0x99
+  lfuse -> 0xe0 (use external clock input)
