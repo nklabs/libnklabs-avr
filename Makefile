@@ -42,22 +42,29 @@ CFLAGS= \
    -std=gnu99 \
    -D$(NK_PLATFORM) -DNK_PLATFORM=\"$(NK_PLATFORM)\" -DNK_VERSION_MAJOR=$(NK_VERSION_MAJOR)  -DNK_VERSION_MINOR=$(NK_VERSION_MINOR) -DNK_YEAR=$(NK_YEAR) -DNK_MONTH=$(NK_MONTH) -DNK_DAY=$(NK_DAY) -DNK_HOUR=$(NK_HOUR) -DNK_MINUTE=$(NK_MINUTE) -DNK_GIT_REV=$(NK_GIT_REV)
 
+OBJS = demo.o
+
 OBJS = \
   main.o \
-  basic_cmds.o \
-  info_cmd.o \
-  nkarch_avr.o \
   nkuart_avr.o \
-  libnklabs/src/nkcli.o \
-  libnklabs/src/nkcrclib.o \
-  libnklabs/src/nkinfile.o \
-  libnklabs/src/nkmcuflash.o \
-  libnklabs/src/nkoutfile.o \
-  libnklabs/src/nkprintf.o \
-  libnklabs/src/nkreadline.o \
-  libnklabs/src/nkscan.o \
+  nkarch_avr.o \
   libnklabs/src/nksched.o \
-  libnklabs/src/nkstring.o \
+  libnklabs/src/nkprintf.o \
+  libnklabs/src/nkoutfile.o \
+  libnklabs/src/nkinfile.o \
+  libnklabs/src/nkscan.o \
+  libnklabs/src/nkcli.o \
+  libnklabs/src/nkreadline.o \
+  libnklabs/src/nkstring.o
+
+
+#  basic_cmds.o \
+#  info_cmd.o \
+#  nkarch_avr.o \
+#  libnklabs/src/nkcrclib.o \
+#  libnklabs/src/nkmcuflash.o \
+#  libnklabs/src/nkprintf.o \
+#  libnklabs/src/nksched.o \
 
 #  libnklabs/src/nkdbase.o \
 #  libnklabs/src/nkchecked.o \
@@ -86,6 +93,8 @@ demo.out : $(SUBDIR_OBJS) avr.ld
 	-T avr.ld \
 	$(SUBDIR_OBJS)
 
+
+
 # Add to print verbose linker information
 #	-Wl,--verbose \
 
@@ -97,7 +106,11 @@ clean:
 	rm -rf obj
 
 flash:
-	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U flash:w:rom.hex
+	avrdude -p m32 -c atmelice_isp -U flash:w:rom.hex
+#	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U flash:w:rom.hex
+
+verify:
+	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U flash:v:rom.hex
 
 # Change lower fuse byte from 0xE1 to 0xE0, so that external clock is used
 
