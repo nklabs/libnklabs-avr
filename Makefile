@@ -15,6 +15,8 @@ CFLAGS= \
    -Wall \
    -std=gnu99 \
 
+OBJS = demo.o
+
 rom.hex : demo.out
 	$(OBJCOPY) -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures demo.out rom.hex
 
@@ -25,11 +27,13 @@ demo.out : demo.o avr.ld
 	-Wl,--end-group \
 	-Wl,--gc-sections \
 	-T avr.ld \
-	-Wl,--verbose \
 	demo.o
 
-demo.o : demo.c
-	$(CC) $(CFLAGS) -Os -c demo.c
+# Add to print verbose linker information
+#	-Wl,--verbose \
+
+#demo.o : demo.c
+#	$(CC) $(CFLAGS) -Os -c demo.c
 
 clean:
 	rm -f *.o *.out *.map *.hex
