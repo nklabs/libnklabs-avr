@@ -163,7 +163,12 @@ SECTIONS
   {
      PROVIDE (__data_start = .) ;
     *(.data)
-     *(.data*)
+    *(.data*)
+    . = ALIGN(2);
+    __start_COMMAND_TABLE = .;
+    KEEP(*(.COMMAND_TABLE));
+    __stop_COMMAND_TABLE = .;
+    . = ALIGN(2);
     *(.rodata)  /* We need to include .rodata here if gcc is used */
      *(.rodata*) /* with -fdata-sections.  */
     *(.gnu.linkonce.d*)
