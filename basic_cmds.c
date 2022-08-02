@@ -23,7 +23,6 @@
 #include <inttypes.h>
 #include "nkreadline.h"
 #include "nkcli.h"
-#include "basic_cmds.h"
  
 // Control echoing
 
@@ -57,23 +56,23 @@ COMMAND(cmd_echo,
 
 static int cmd_mem(nkinfile_t *args)
 {
-    uint32_t addr;
+    uintptr_t addr;
     uint32_t len;
     uint32_t val;
-    if (facmode && nk_fscan(args, "rd %"PRIx32" ", &addr))
+    if (facmode && nk_fscan(args, "rd %"PRIxPTR" ", &addr))
     {
-        nk_printf("[%"PRIx32"] has %"PRIx32"\n", addr, *(uint32_t *)addr);
+        nk_printf("[%"PRIxPTR"] has %"PRIx32"\n", addr, *(uint32_t *)addr);
     }
-    else if (facmode && nk_fscan(args, "wr %"PRIx32" %x ", &addr, &val))
+    else if (facmode && nk_fscan(args, "wr %"PRIxPTR" %"PRIx32" ", &addr, &val))
     {
         *(uint32_t *)addr = val;
-        nk_printf("Wrote %"PRIx32" to [%"PRIx32"]\n", val, addr);
+        nk_printf("Wrote %"PRIx32" to [%"PRIxPTR"]\n", val, addr);
     }
-    else if (facmode && nk_fscan(args, "hd %"PRIx32" %x ", &addr, &len))
+    else if (facmode && nk_fscan(args, "hd %"PRIxPTR" %"PRIx32" ", &addr, &len))
     {
 	nk_byte_hex_dump((unsigned char *)0, 0, addr, len);
     }
-    else if (facmode && nk_fscan(args, "hd %"PRIx32" ", &addr))
+    else if (facmode && nk_fscan(args, "hd %"PRIxPTR" ", &addr))
     {
     	len = 0x100;
 	nk_byte_hex_dump((unsigned char *)0, 0, addr, len);
@@ -100,7 +99,7 @@ static int cmd_reboot(nkinfile_t *args)
         if (nk_fscan(args, "")) {
             nk_printf("Rebooting...\n");
             nk_udelay(2000);
-            reboot();
+            nk_reboot();
         } else {
             nk_printf("Syntax error\n");
         }

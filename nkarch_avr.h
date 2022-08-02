@@ -28,30 +28,52 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
-// Borrow Linux kernel lock syntax
+// AVR: define to put help text and format strings in flash memory
+#define NK_PSTR
 
-typedef int spinlock_t;
+#ifdef NK_PSTR
+#define NK_FLASH __flash
+#else
+#define NK_FLASH
+#endif
+
+typedef uint8_t nk_irq_flag_t;
+typedef uint8_t nk_spinlock_t;
 #define SPIN_LOCK_UNLOCKED 0
 
 // Restore interrupt enable flag
-#define nk_irq_unlock(lock, flags) \
-    do { \
-            SREG = flags; \
-    } while (0);
+// Release spinlock on multi-core systems
+
+inline __attribute__((always_inline)) void nk_irq_unlock(nk_spinlock_t *lock, nk_irq_flag_t flags)
+{
+    (void)lock;
+    SREG = flags;
+}
+
+// Restore interrupt enable flag
+// Release spinlock on multi-core systems
+// Sleep until an interrupt occurs
+
+inline __attribute__((always_inline)) void nk_irq_unlock_and_wait(nk_spinlock_t *lock, nk_irq_flag_t flags, int deepness)
+{
+    (void)lock;
+    (void)deepness;
+    SREG = flags;
+}
 
 // Save interrupt enable flag and disable all interrupts
-#define nk_irq_lock(lock, flags) \
-    do { \
-            flags = SREG; \
-            cli(); \
-    } while (0);
+// Acquire spinlock on multi-core systems
 
-#define nk_irq_unlock_and_wait(lock, flags, deepness) \
-    do { \
-        nk_irq_unlock(lock, flags); \
-    } while (0);
-
+inline __attribute__((always_inline)) nk_irq_flag_t nk_irq_lock(nk_spinlock_t *lock)
+{
+    (void)lock;
+    nk_irq_flag_t flags = SREG;
+    cli();
+    return flags;
+}
 
 // Scheduler timer
 
@@ -86,5 +108,9 @@ void nk_udelay(unsigned long usec);
 // Erase size for MCU flash- in this case it's an external SPI flash
 
 #define NK_MCUFLASH_ERASE_SIZE 4096
+
+// Reboot
+
+void nk_reboot(void);
 
 #endif

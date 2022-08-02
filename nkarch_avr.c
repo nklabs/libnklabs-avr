@@ -31,7 +31,7 @@ static volatile nk_time_t wallclock;
 // Convert delay in milliseconds to number of scheduler timer clock ticks
 nk_time_t nk_convert_delay(uint32_t delay)
 {
-	return delay * (NK_TIME_COUNTS_PER_SECOND / 1000);
+    return delay * (NK_TIME_COUNTS_PER_SECOND / 1000);
 }
 
 ISR(TIMER2_COMP_vect)
@@ -41,34 +41,35 @@ ISR(TIMER2_COMP_vect)
 
 void nk_init_sched_timer()
 {
-   TCCR2 = (1 << WGM21) | (5 << CS20);
-   OCR2 = 28;
-   TIMSK = (1 << OCIE2);
+    TCCR2 = (1 << WGM21) | (5 << CS20);
+    OCR2 = 28;
+    TIMSK = (1 << OCIE2);
 
-   // Enable interrupts
-   sei();
+    // Enable interrupts
+    sei();
 }
 
 // Generate timer interrupt to wake up system
 
 void nk_sched_wakeup(nk_time_t when)
 {
+    (void)when;
 }
 
 // Get current time
 
-extern spinlock_t sched_lock;
+extern nk_spinlock_t sched_lock;
 
 nk_time_t nk_get_time()
 {
-	unsigned long irq_flag;
-	nk_time_t wall;
+    nk_irq_flag_t irq_flag;
+    nk_time_t wall;
 
-	nk_irq_lock(&sched_lock, irq_flag);
-	wall = wallclock;
-	nk_irq_unlock(&sched_lock, irq_flag);
+    irq_flag = nk_irq_lock(&sched_lock);
+    wall = wallclock;
+    nk_irq_unlock(&sched_lock, irq_flag);
 
-	return wall;
+    return wall;
 }
 
 // Busy loop delay
@@ -76,135 +77,58 @@ nk_time_t nk_get_time()
 
 void nk_udelay(unsigned long usec)
 {
-	// Generic implementation
-	nk_time_t old = nk_get_time();
-	nk_time_t clocks = usec * (NK_TIME_COUNTS_PER_SECOND / 1000000);
-	while ((nk_get_time() - old) < clocks);
+    // Generic implementation
+    nk_time_t old = nk_get_time();
+    nk_time_t clocks = usec * (NK_TIME_COUNTS_PER_SECOND / 1000000);
+    while ((nk_get_time() - old) < clocks);
 }
 
 int nk_init_mcuflash()
 {
-	return 0;
+    return 0;
 }
 
 int nk_mcuflash_erase(const void *info, uint32_t address, uint32_t byte_count)
 {
-	return -1;
+    (void)info;
+    (void)address;
+    (void)byte_count;
+    return -1;
 }
 
 int nk_mcuflash_write(const void *info, uint32_t address, const uint8_t *data, uint32_t byte_count)
 {
-	return -1;
+    (void)info;
+    (void)address;
+    (void)data;
+    (void)byte_count;
+    return -1;
 }
 
 int nk_mcuflash_read(const void *info, uint32_t address, uint8_t *data, uint32_t byte_count)
 {
-	return -1;
+    (void)info;
+    (void)address;
+    (void)data;
+    (void)byte_count;
+    return -1;
 }
 
-void reboot(void)
+void nk_reboot(void)
 {
+    // To reset: enable watchdog timer, but don't answer it
+    cli();
+    wdt_enable(WDTO_15MS);
+    for (;;) { }
 };
 
-#if 0
-size_t strlen(const char *s)
+// Disable WDT at reset
+// We have to do this because rebooting the above way leaves WDT enabled after reset
+
+void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
+
+void wdt_init(void)
 {
-	const char *t = s;
-	while (*t)
-		++t;
-	return (size_t)(t - s);
+    MCUSR = 0;
+    wdt_disable();
 }
-
-int strcmp(const char *a, const char * b)
-{
-	while (*a && *b && *a == *b) {
-		++a;
-		++b;
-	}
-	if (*a > *b)
-		return 1;
-	else if (*a < *b)
-		return -1;
-	else
-		return 0;
-}
-
-char *strcpy(char *d, const char *s)
-{
-	char *t = d;
-	while ((*t++ = *s++));
-	return d;
-}
-
-char *stpcpy(char *d, const char *s)
-{
-	while ((*d = *s)) {
-		++d;
-		++s;
-	}
-	return d;
-}
-
-void *memset(void *d, int c, size_t n)
-{
-	char *t = d;
-	while (n--) {
-		*t++ = (char)c;
-	}
-	return d;
-}
-
-void *memmove(void *d, const void *s, size_t n)
-{
-	char *t = d;
-	const char *u = s;
-
-	if (d < s) {
-		while (n--) {
-			*t++ = *u++;
-		}
-	} else if (d > s) {
-		t += n;
-		u += n;
-		while (n--) {
-			*--t = *--u;
-		}
-	}
-
-	return d;
-}
-
-void *memcpy(void *d, const void *s, size_t n)
-{
-	char *t = d;
-	const char *u = s;
-
-	while (n--) {
-		*t++ = *u++;
-	}
-
-	return d;
-}
-
-int memcmp(const void *d, const void *s, size_t n)
-{
-	const unsigned char *t = d;
-	const unsigned char *u = s;
-	while (n--) {
-		if (*t > *u) return 1;
-		if (*t < *u) return -1;
-		++t; ++u;
-	}
-	return 0;
-}
-
-int atoi(const char *s)
-{
-	int val = 0;
-	while (*s >= '0' && *s <= '9')
-	{
-		val = val * 10 + *s++ - '0';
-	}
-	return val;
-}
-#endif

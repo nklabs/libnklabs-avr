@@ -1,6 +1,7 @@
 Difficulty:
   "avrdude" from "apt-get install" did not work on 18.04.  I needed to install from source (version 7.0)
   still sometimes have mystery can't program problems with avrdude..
+  I gave up: using atmel ICE instead.. it connects to STK500 board...
 
   if the name you use in the ISR() does not exist, there is no warning- code will not be generated.  Instead
   vector will be left as default, which is to jump to reset handler.

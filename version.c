@@ -21,11 +21,11 @@
 
 #include "version.h"
 
-const uint16_t firmware_major = NK_VERSION_MAJOR;
-const uint16_t firmware_minor = NK_VERSION_MINOR;
-const uint16_t build_year = NK_YEAR;
-const uint8_t build_month = NK_MONTH;
-const uint8_t build_day = NK_DAY;
-const uint8_t build_hour = NK_HOUR;
-const uint8_t build_minute = NK_MINUTE;
-const char git_hash[] = NK_GIT_REV;
+const NK_FLASH uint16_t firmware_major = NK_VERSION_MAJOR;
+const NK_FLASH uint16_t firmware_minor = NK_VERSION_MINOR;
+const NK_FLASH uint16_t build_year = NK_YEAR;
+const NK_FLASH uint8_t build_month = NK_MONTH;
+const NK_FLASH uint8_t build_day = NK_DAY;
+const NK_FLASH uint8_t build_hour = NK_HOUR;
+const NK_FLASH uint8_t build_minute = NK_MINUTE;
+const NK_FLASH char git_hash[] = NK_GIT_REV;

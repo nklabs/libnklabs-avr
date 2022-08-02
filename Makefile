@@ -39,6 +39,11 @@ CFLAGS= \
    -fpack-struct \
    -fshort-enums \
    -Wall \
+   -Wconversion -Wunused -Wwrite-strings \
+   -Wstrict-overflow=4 -Wmissing-include-dirs -Winit-self -Wcast-qual \
+   -Wundef -Wlogical-op -Wmissing-declarations -Wformat \
+   -Wmissing-format-attribute -Wformat-nonliteral \
+   -Wswitch-enum -Wshadow -Wextra -Wformat-security \
    -std=gnu99 \
    -D$(NK_PLATFORM) -DNK_PLATFORM=\"$(NK_PLATFORM)\" -DNK_VERSION_MAJOR=$(NK_VERSION_MAJOR)  -DNK_VERSION_MINOR=$(NK_VERSION_MINOR) -DNK_YEAR=$(NK_YEAR) -DNK_MONTH=$(NK_MONTH) -DNK_DAY=$(NK_DAY) -DNK_HOUR=$(NK_HOUR) -DNK_MINUTE=$(NK_MINUTE) -DNK_GIT_REV=$(NK_GIT_REV)
 
@@ -55,22 +60,16 @@ OBJS = \
   libnklabs/src/nkscan.o \
   libnklabs/src/nkcli.o \
   libnklabs/src/nkreadline.o \
-  libnklabs/src/nkstring.o
-
-
-#  basic_cmds.o \
-#  info_cmd.o \
-#  nkarch_avr.o \
-#  libnklabs/src/nkcrclib.o \
-#  libnklabs/src/nkmcuflash.o \
-#  libnklabs/src/nkprintf.o \
-#  libnklabs/src/nksched.o \
-
-#  libnklabs/src/nkdbase.o \
-#  libnklabs/src/nkchecked.o \
-#  libnklabs/src/nkdirect.o \
-#  libnklabs/src/nkserialize.o \
-#  libnklabs/src/nkymodem.o
+  libnklabs/src/nkstring.o \
+  info_cmd.o \
+  basic_cmds.o \
+  libnklabs/src/nkcrclib.o \
+  libnklabs/src/nkmcuflash.o \
+  libnklabs/src/nkdbase.o \
+  libnklabs/src/nkchecked.o \
+  libnklabs/src/nkdirect.o \
+  libnklabs/src/nkserialize.o \
+  libnklabs/src/nkymodem.o
 
 # Keep them in a subdirectory
 MOST_OBJS = $(addprefix obj/, $(OBJS))
