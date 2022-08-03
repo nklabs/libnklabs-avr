@@ -58,15 +58,15 @@ reset_cause_t reset_cause;
 static int cmd_info(nkinfile_t *args)
 {
 	if (nk_fscan(args, "")) {
-                int x;
                 nk_printf("Firmware version %d.%d\n", firmware_major, firmware_minor);
                 nk_printf("Build date: %4.4d-%2.2d-%2.2d %2.2d:%2.2d\n", build_year, build_month, build_day, build_hour, build_minute);
-                nk_printf("Git hash: ");
-                // We print it like this in case we are on AVR and the string is located in program memory
-                for (x = 0; git_hash[x]; ++x)
-			nk_putc(git_hash[x]);
-                nk_putc('\n');
+#ifdef NK_PSTR
+                nk_printf("Git hash: %S\n", git_hash);
+                nk_printf("Target platform: %S\n", PSTR(NK_PLATFORM));
+#else
+                nk_printf("Git hash: %s\n", git_hash);
                 nk_printf("Target platform: %s\n", NK_PLATFORM);
+#endif
 
 #ifdef NK_PLATFORM_RISCV
 	        nk_printf("CPU frequency = %"PRIu32"\n", reg_cpu_freq);

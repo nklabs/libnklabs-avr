@@ -17,7 +17,11 @@ void test_task(void *data)
 int main(void)
 {
     nk_init_uart();
+#ifdef NK_PSTR
+    nk_printf("%s\n", PSTR("Hello, world!"));
+#else
     nk_puts("Hello, world!\r\n");
+#endif
     nk_init_sched();
     nk_init_cli();
 #ifdef TEST
