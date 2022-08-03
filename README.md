@@ -1,5 +1,9 @@
 # libnklabs example for 8-bit AVR microcontrollers
 
+This repository holds an example application for
+[libnklabs](https://github.com/nklabs/libnklabs) that runs on 8-bit AVR
+processors.
+
 ## ATmega32
 
 The target is an ATmega32 located in an STK500 development board.  We have
@@ -67,3 +71,59 @@ Build the software with:
 Program the chip using Atmel ICE:
 
 	make flash
+
+## CLI
+
+The libnklabs CLI should appead on the serial port:
+
+~~~~
+[Initialize] Work queue
+[Initialize] Command Line Interface
+[Initialize] Begin main loop
+>
+>help
+help <name> for help with a specific command
+
+Available commands:
+
+echo                      Control command echoing
+help                      Help command
+info                      Display serial number and firmware information
+mcuflash                  Read/write flash memory
+mem                       Read/write memory
+power                     Show/control power mode
+reboot                    Reboot system
+work                      Show work queue
+>info
+Firmware version 0.4
+Build date: 2022-08-03 13:38
+Git hash: a88da22ae4336ac59483831a738ba7cdf47f9ca7-dirty
+Target platform: NK_PLATFORM_AVR
+Memory footprint:
+  sizeof(bool) = 1
+  sizeof(char) = 1
+  sizeof(short) = 2
+  sizeof(int) = 2
+  sizeof(long) = 4
+  sizeof(long long) = 8
+  sizeof(void *) = 2
+>
+>mem hd 0
+0000: 82 00 00 00 fc 00 00 00  00 74 00 01 00 00 00 00  .........t......
+0010: 00 00 00 00 01 00 00 07  00 00 00 01 ab 07 1e 00  ................
+0020: 00 f8 fe ff 00 00 00 00  30 01 98 60 30 00 00 4b  ........0..`0..K
+0030: ff 00 00 c3 00 00 ff 00  00 ff 00 00 00 00 73 03  ..............s.
+0040: 00 00 00 1c 13 0d 00 00  00 00 00 00 00 00 00 00  ................
+0050: 00 c0 00 00 00 00 00 00  00 80 00 00 00 ab 07 82  ................
+0060: 66 00 74 00 74 00 00 00  00 00 00 00 00 00 00 00  f.t.t...........
+0070: 00 00 01 00 00 00 00 00  00 00 00 00 00 00 09 0f  ................
+0080: 01 00 90 01 01 01 0d 09  b2 27 5a 04 7a 20 53 06  .........'Z.z S.
+0090: 1e 26 fc 12 1e 29 15 08  d3 26 44 02 76 0c c2 07  .&...)...&D.v...
+00a0: 02 28 d9 02 ba 0d 3e 00  00 00 00 15 00 00 00 15  .(....>.........
+00b0: 00 00 00 0d 68 65 6c 70  0d 69 6e 66 6f 0d 0d 6d  ....help.info..m
+00c0: 65 6d 20 68 64 20 30 0d  00 00 00 00 00 00 00 00  em hd 0.........
+00d0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  ................
+00e0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  ................
+00f0: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  ................
+>
+~~~~
