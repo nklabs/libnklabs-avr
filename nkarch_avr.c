@@ -96,7 +96,7 @@ int nk_mcuflash_erase(const void *info, uint32_t address, uint32_t byte_count)
     return -1;
 }
 
-int nk_mcuflash_write(const void *info, uint32_t address, const uint8_t *data, uint32_t byte_count)
+int nk_mcuflash_write(const void *info, uint32_t address, const uint8_t *data, size_t byte_count)
 {
     (void)info;
     (void)address;
@@ -105,7 +105,7 @@ int nk_mcuflash_write(const void *info, uint32_t address, const uint8_t *data, u
     return -1;
 }
 
-int nk_mcuflash_read(const void *info, uint32_t address, uint8_t *data, uint32_t byte_count)
+int nk_mcuflash_read(const void *info, uint32_t address, uint8_t *data, size_t byte_count)
 {
     (void)info;
     (void)address;
