@@ -7,6 +7,8 @@ been using the Atmel ICE instead of the STK500 to program the chip.  Atmel
 ICE seems to work more reliably with "avrdude" (the open source programming
 tool).
 
+![STK500 with ATmega32](doc/stk500.png)
+
 ATmega32 has 32K of flash and 2K of RAM.  This is enough to run the
 libnklabs CLI.
 
@@ -32,7 +34,7 @@ in format strings are not type checked).  Also, there are now two directives
 for strings: use %s if the string is located in RAM, or %S if the string is
 located in flash.
 
-## AVR Clock
+## AVR Oscillator
 
 New, unprogrammed ATmega32s use a built-in 1 MHz oscillator by default.
 
@@ -49,7 +51,7 @@ This fuse byte can be programmed with
 
 PD0 and PD1 are the UART Tx and Rx lines.  These should be connected to the
 RXD and TXD pins so that the "RS232 SPARE" DB9 connector of the STK500 can
-be used to access the libnklabs CLI.
+be used to access the libnklabs CLI.  See the photo above.
 
 ## Build instructions
 
