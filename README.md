@@ -98,13 +98,18 @@ Program the chip using Atmel ICE:
 
 	make -f Makefile.atmega32 flash
 
-or
+or using mEDBG:
 
 	make -f Makefile.atmega328p flash
 
 ## CLI
 
 The libnklabs CLI should appead on the serial port:
+
+Use 115200 baud for the ATmega32.
+
+Use 38400 baud for the ATmega328pb.  The baud is limited in order to get an
+accurate rate using an integer divider from the 16 MHz clock.
 
 ~~~~
 [Initialize] Work queue

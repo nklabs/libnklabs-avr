@@ -28,7 +28,7 @@
 
 // Probably ATmega328pb with 16 MHz clock
 #define F_CPU 16000000UL
-#define BAUD 9600
+#define BAUD 38400
 
 #define UCSRA UCSR0A
 #define RXC RXC0
