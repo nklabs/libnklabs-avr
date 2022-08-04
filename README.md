@@ -22,9 +22,10 @@ This is mostly hidden to the user, since nk_printf is implemented as a macro
 which invokes PSTR() on the format string.
 
 Unfortunately, this breaks gcc's format string type checking (so directives
-in format strings are not type checked).  Also, there are now two directives
-for strings: use %s if the string is located in RAM, or %S if the string is
-located in flash.
+in format strings are not type checked).
+
+Also, there are now two nk_printf directives for strings: use %s if the
+string is located in RAM, or %S if the string is located in flash.
 
 For now, these chips are supported:
 
