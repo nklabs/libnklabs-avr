@@ -67,7 +67,7 @@ development board.  This board is programmed with the on-board mEDBG.
 
 [https://www.microchip.com/en-us/development-tool/atmega328pb-xmini](https://www.microchip.com/en-us/development-tool/atmega328pb-xmini)
 
-ATmega328PB has 64KB of flash memory and 4KB of RAM.
+ATmega328PB has 32KB of flash memory and 2KB of RAM.
 
 ### Oscillator
 
@@ -88,6 +88,8 @@ Prerequisites:
 Note that avr-gcc has support for ATmega328P, but not ATmega328PB.  See:
 
 [https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/](https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/)
+
+But compiling with ATmega328P works since ATmega328PB is upward compatible.
 
 Build the software with:
 
