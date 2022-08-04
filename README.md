@@ -38,7 +38,7 @@ tool).
 
 ![STK500 with ATmega32](doc/stk500.png)
 
-ATmega32 has 32K of flash and 2K of RAM.  This is enough to run the
+ATmega32 has 32KB of flash and 2KB of RAM.  This is enough to run the
 libnklabs CLI.
 
 ### Oscillator
@@ -66,6 +66,8 @@ The target is an ATmega328pb located on a ATmega328PB Xplained Mini
 development board.  This board is programmed with the on-board mEDBG.
 
 [https://www.microchip.com/en-us/development-tool/atmega328pb-xmini](https://www.microchip.com/en-us/development-tool/atmega328pb-xmini)
+
+ATmega328PB has 64KB of flash memory and 4KB of RAM.
 
 ### Oscillator
 
