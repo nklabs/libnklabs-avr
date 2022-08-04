@@ -23,6 +23,42 @@
 #include "nksched.h"
 #include "nkuart.h"
 
+// Select UART if there are more than one
+#ifndef RXC
+
+// Probably ATmega328pb with 16 MHz clock
+#define F_CPU 16000000UL
+#define BAUD 9600
+
+#define UCSRA UCSR0A
+#define RXC RXC0
+
+#define UCSRB UCSR0B
+#define RXEN RXEN0
+#define TXEN TXEN0
+#define UDRE UDRE0
+#define RXCIE RXCIE0
+
+#define UCSRC UCSR0C
+#define USBS USBS0
+#define UCSZ0 UCSZ00
+
+#define UDR UDR0
+
+#define UBRRL UBRR0L
+#define UBRRH UBRR0H
+
+#define USART_RXC_vect USART_RX_vect
+
+#else
+
+// Probably ATmega32 on STK500 with 3.68 MHz clock
+#define F_CPU 3686400UL
+#define BAUD 115200
+
+
+#endif
+
 // Console UART Rx buffer
 
 static unsigned char rx_buf[NK_UART_RXBUF_SIZE];
@@ -172,16 +208,25 @@ int nk_uart_read(char *s, int len, nk_time_t timeout)
 
 // UART configuration settings.
 
-#define F_CPU 3686400UL
-#define BAUD 115200
 #define UBRR_VALUE ((F_CPU / (BAUD * 16UL)) - 1)
 
 void nk_init_uart()
 {
    // Set up UART
+   // Set baud
    UBRRH = (UBRR_VALUE >> 8);
    UBRRL = (UBRR_VALUE);
+   // Enable Tx, Rx and Rx interrupts
    UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
-   UCSRC = (1 << URSEL) | (1 << USBS) | (3 << UCSZ0);
+
+   // Set format
+   UCSRC =
+     0
+#ifdef URSEL
+     | (1 << URSEL) // Select UCSRC regsiter on ATmega32
+#endif
+     | (1 << USBS) // Two stop bits
+     | (3 << UCSZ0); // 8 data bits
+     ;
    sei();
 }

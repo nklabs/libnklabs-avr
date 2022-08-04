@@ -4,18 +4,6 @@ This repository holds an example application for
 [libnklabs](https://github.com/nklabs/libnklabs) that runs on 8-bit AVR
 processors.
 
-## ATmega32
-
-The target is an ATmega32 located in an STK500 development board.  We have
-been using the Atmel ICE instead of the STK500 to program the chip.  Atmel
-ICE seems to work more reliably with "avrdude" (the open source programming
-tool).
-
-![STK500 with ATmega32](doc/stk500.png)
-
-ATmega32 has 32K of flash and 2K of RAM.  This is enough to run the
-libnklabs CLI.
-
 The main challenge with AVR is the limited amount of RAM coupled with the
 fact that string constants are by default stored in RAM.  They are stored
 there by default because AVR provides a separate address space for flash
@@ -38,7 +26,21 @@ in format strings are not type checked).  Also, there are now two directives
 for strings: use %s if the string is located in RAM, or %S if the string is
 located in flash.
 
-## AVR Oscillator
+For now, these chips are supported:
+
+## ATmega32
+
+The target is an ATmega32 located in an STK500 development board.  We have
+been using the Atmel ICE instead of the STK500 to program the chip.  Atmel
+ICE seems to work more reliably with "avrdude" (the open source programming
+tool).
+
+![STK500 with ATmega32](doc/stk500.png)
+
+ATmega32 has 32K of flash and 2K of RAM.  This is enough to run the
+libnklabs CLI.
+
+### Oscillator
 
 New, unprogrammed ATmega32s use a built-in 1 MHz oscillator by default.
 
@@ -49,13 +51,29 @@ multiple of 115200 baud.
 
 This fuse byte can be programmed with
 
-	make fuse
+	make -f Makefile.atmega32 fuse
 
-## AVR UART
+### UART pins
 
 PD0 and PD1 are the UART Tx and Rx lines.  These should be connected to the
 RXD and TXD pins so that the "RS232 SPARE" DB9 connector of the STK500 can
 be used to access the libnklabs CLI.  See the photo above.
+
+## ATmega328pb
+
+The target is an ATmega328pb located on a ATmega328PB Xplained Mini
+development board.  This board is programmed with the on-board mEDBG.
+
+[https://www.microchip.com/en-us/development-tool/atmega328pb-xmini](https://www.microchip.com/en-us/development-tool/atmega328pb-xmini)
+
+### Oscillator
+
+By default the ATmega328pb on the Xplained Mini board is programmed to use
+the 16 MHz clock from the mEDBG.
+
+### UART pins
+
+The UART is connected to the virtual com port of the mEDBG.
 
 ## Build instructions
 
@@ -64,13 +82,25 @@ Prerequisites:
 	sudo apt-get install avrdude
 	sudo apt-get install avr-gcc
 
+Note that avr-gcc has support for ATmega328P, but not ATmega328PB.  See:
+
+[https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/](https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/)
+
 Build the software with:
 
-	make
+	make -f Makefile.atmega32
+
+or
+
+	make -f Makefile.atmega328p
 
 Program the chip using Atmel ICE:
 
-	make flash
+	make -f Makefile.atmega32 flash
+
+or
+
+	make -f Makefile.atmega328p flash
 
 ## CLI
 

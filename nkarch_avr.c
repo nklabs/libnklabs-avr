@@ -34,16 +34,30 @@ nk_time_t nk_convert_delay(uint32_t delay)
     return delay * (NK_TIME_COUNTS_PER_SECOND / 1000);
 }
 
+#ifdef TCCR2
 ISR(TIMER2_COMP_vect)
+#else
+ISR(TIMER2_COMPA_vect)
+#endif
 {
     ++wallclock;
 }
 
+
 void nk_init_sched_timer()
 {
+#ifdef TCCR2
+    // Set for ~1000Hz from 3.68 MHz
     TCCR2 = (1 << WGM21) | (5 << CS20);
     OCR2 = 28;
     TIMSK = (1 << OCIE2);
+#else
+    // Set for 1000 Hz from 16 MHz
+    TCCR2B = (5 << CS20); // divide by 128
+    TCCR2A = (1 << WGM21); // Clear timer on match mode
+    OCR2A = 124; // divide by 125
+    TIMSK2 = (1 << OCIE2A);
+#endif
 
     // Enable interrupts
     sei();

@@ -31,7 +31,7 @@ CFLAGS= \
    -I libnklabs/inc \
    -I config \
    -I . \
-   -mmcu=atmega32 \
+   -mmcu=atmega328p \
    -Os \
    -funsigned-char \
    -funsigned-bitfields \
@@ -105,16 +105,10 @@ clean:
 	rm -rf obj
 
 flash:
-	avrdude -p m32 -c atmelice_isp -U flash:w:rom.hex
-#	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U flash:w:rom.hex
+	avrdude -p m328pb -c xplainedmini -U flash:w:rom.hex
 
 verify:
-	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U flash:v:rom.hex
-
-# Change lower fuse byte from 0xE1 to 0xE0, so that external clock is used
-
-fuse:
-	avrdude -p m32 -c stk500 -P /dev/ttyUSB0 -U lfuse:w:0xe0:m
+	avrdude -p m328pb -c xplainedmini -U flash:v:rom.hex
 
 obj:
 	mkdir obj

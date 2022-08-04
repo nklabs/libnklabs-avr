@@ -1,0 +1,13 @@
+- better support for different AVRs
+
+- calibrate delay loop so that we can have a usec delay (get STM32)
+
+- mcu flash stuff
+
+- eeprom stuff?
+
+- spi/i2c/gpio pin access..
+
+- support some kind of external spi-flash chip
+    - get ymodem working with spi-flash
+    - bootloader: spi-flash to mcu-flash
