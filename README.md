@@ -69,6 +69,9 @@ be used to access the libnklabs CLI.  See the photo above.
 The target is an ATmega328pb located on a ATmega328PB Xplained Mini
 development board.  This board is programmed with the on-board mEDBG.
 
+![ATmega328pb Xplained Mini](doc/atmega328pb-xpld.png)
+
+
 [https://www.microchip.com/en-us/development-tool/atmega328pb-xmini](https://www.microchip.com/en-us/development-tool/atmega328pb-xmini)
 
 ATmega328PB has 32KB of flash memory and 2KB of RAM.
