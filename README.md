@@ -87,7 +87,9 @@ The UART is connected to the virtual com port of the mEDBG.
 
 ## Build instructions
 
-Prerequisites:
+### Prerequisites
+
+Install the compiler and the debugger interface:
 
 	sudo apt-get install avrdude
 	sudo apt-get install avr-gcc
@@ -97,6 +99,54 @@ Note that avr-gcc has support for ATmega328P, but not ATmega328PB.  See:
 [https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/](https://stuvel.eu/post/2021-04-27-atmega328pb-on-gcc/)
 
 But compiling with ATmega328P works since ATmega328PB is upward compatible.
+
+Install "picocom" to connect your terminal emulator to a USB serial port:
+
+	sudo apt-get install picocom
+	sudo apt-get install lrzsz
+
+### Disable Modem Manager
+
+The USB to serial adapter typically provided on embedded debuggers shows up
+in Linux as a modem.  The Linux modem manager will try to talk to it (you'll
+see ATxx commands being sent to the MCU after you connect with picocom).  To
+prevent this:
+
+	sudo systemctl disable ModemManager.service
+
+Alternatively, you can try this (if you need the modem manager): It did not
+work on the ATSAMD21 Xplained Pro board, but did on the others.  Modify the
+file /lib/systemd/system/ModemManager.service
+
+        [Unit]
+        Description=Modem Manager
+
+        [Service]
+        Type=dbus
+        BusName=org.freedesktop.ModemManager1
+        ExecStart=/usr/sbin/ModemManager --filter-policy=default   <-- Change from strict to default
+        StandardError=null
+        Restart=on-abort
+        CapabilityBoundingSet=CAP_SYS_ADMIN
+        ProtectSystem=true
+        ProtectHome=true
+        PrivateTmp=true
+        RestrictAddressFamilies=AF_NETLINK AF_UNIX
+        NoNewPrivileges=true
+        User=root
+        Environment="MM_FILTER_RULE_TTY_ACM_INTERFACE=0"     <-- Add this line
+
+        [Install]
+        WantedBy=multi-user.target
+        Alias=dbus-org.freedesktop.ModemManager1.service
+
+Then:
+
+        systemctl daemon-reload
+        systemctl ModemManager.service
+
+
+### Building
 
 Build the software with:
 
