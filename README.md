@@ -114,38 +114,6 @@ prevent this:
 
 	sudo systemctl disable ModemManager.service
 
-Alternatively, you can try this (if you need the modem manager): It did not
-work on the ATSAMD21 Xplained Pro board, but did on the others.  Modify the
-file /lib/systemd/system/ModemManager.service
-
-        [Unit]
-        Description=Modem Manager
-
-        [Service]
-        Type=dbus
-        BusName=org.freedesktop.ModemManager1
-        ExecStart=/usr/sbin/ModemManager --filter-policy=default   <-- Change from strict to default
-        StandardError=null
-        Restart=on-abort
-        CapabilityBoundingSet=CAP_SYS_ADMIN
-        ProtectSystem=true
-        ProtectHome=true
-        PrivateTmp=true
-        RestrictAddressFamilies=AF_NETLINK AF_UNIX
-        NoNewPrivileges=true
-        User=root
-        Environment="MM_FILTER_RULE_TTY_ACM_INTERFACE=0"     <-- Add this line
-
-        [Install]
-        WantedBy=multi-user.target
-        Alias=dbus-org.freedesktop.ModemManager1.service
-
-Then:
-
-        systemctl daemon-reload
-        systemctl ModemManager.service
-
-
 ### Building
 
 Build the software with:
