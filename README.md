@@ -27,6 +27,10 @@ in format strings are not type checked).
 Also, there are now two nk_printf directives for strings: use %s if the
 string is located in RAM, or %S if the string is located in flash.
 
+A good source of C programming on AVR is here:
+
+[https://www.nongnu.org/avr-libc/user-manual/FAQ.html](https://www.nongnu.org/avr-libc/user-manual/FAQ.html)
+
 For now, these chips are supported:
 
 ## ATmega32
