@@ -32,7 +32,11 @@ NK_PLATFORM := NK_PLATFORM_AVR
 # It is postfixed with -dirty if there are uncommitted changed; otherwise, it is postfixed with -clean.
 NK_GIT_REV := \"$(shell git rev-parse HEAD)-$(shell if git diff-index --quiet HEAD --; then echo clean; else echo dirty; fi)\"
 
-# Example Makefile for demo project
+TOOL_DIR :=
+
+CC := $(TOOL_DIR)avr-gcc
+CPP := $(TOOL_DIR)avr-g++
+OBJCOPY := $(TOOL_DIR)avr-objcopy
 
 CC := avr-gcc
 OBJCOPY := avr-objcopy
