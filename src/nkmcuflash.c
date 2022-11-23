@@ -32,9 +32,9 @@ static void flash_hex_dump(uint32_t addr, uint32_t len)
     while(len) {
         uint32_t this_page = (addr & ~255U);
         uint32_t this_ofst = (addr & 255U);
-        uint32_t this_len = 256U - this_ofst;
+        size_t this_len = (size_t)(256U - this_ofst);
         if (this_len > len)
-            this_len = len;
+            this_len = (size_t)len;
 
         nk_mcuflash_read(NULL, this_page + this_ofst, buf + this_ofst, this_len);
         nk_byte_hex_dump(buf, this_page, this_ofst, this_len);
@@ -51,9 +51,9 @@ static uint32_t flash_crc(uint32_t addr, uint32_t len)
     while(len) {
         uint32_t this_page = (addr & ~255U);
         uint32_t this_ofst = (addr & 255U);
-        uint32_t this_len = 256U - this_ofst;
+        size_t this_len = (size_t)(256U - this_ofst);
         if (this_len > len)
-            this_len = len;
+            this_len = (size_t)len;
 
         nk_mcuflash_read(NULL, this_page, buf, this_len);
 
@@ -73,50 +73,50 @@ static int cmd_mcuflash(nkinfile_t *args)
     uint32_t len;
     uint64_t val;
     uint8_t val8;
-    if (facmode && nk_fscan(args, "rd %lx ", &addr)) {
+    if (facmode && nk_fscan(args, "rd %"PRIx32" ", &addr)) {
         nk_mcuflash_read(NULL, addr, (uint8_t *)&val, 8);
-        nk_printf("[%lx] has %llx\n", addr, val);
-    } else if (facmode && nk_fscan(args, "wr %lx %llx ", &addr, &val)) {
+        nk_printf("[%"PRIx32"] has %"PRIx64"\n", addr, val);
+    } else if (facmode && nk_fscan(args, "wr %"PRIx32" %"PRIx64" ", &addr, &val)) {
         nk_mcuflash_write(NULL, addr, (uint8_t *)&val, 8);
-        nk_printf("Wrote %llx to [%lx]\n", val, addr);
-    } else if (facmode && nk_fscan(args, "hd %lx %x ", &old_mcuflash_addr, &len)) {
+        nk_printf("Wrote %"PRIx64" to [%"PRIx32"]\n", val, addr);
+    } else if (facmode && nk_fscan(args, "hd %"PRIx32" %"PRIx32" ", &old_mcuflash_addr, &len)) {
         flash_hex_dump(old_mcuflash_addr, len);
 	old_mcuflash_addr += len;
-    } else if (facmode && nk_fscan(args, "hd %lx ", &old_mcuflash_addr)) {
+    } else if (facmode && nk_fscan(args, "hd %"PRIx32" ", &old_mcuflash_addr)) {
     	len = 0x100;
         flash_hex_dump(old_mcuflash_addr, len);
 	old_mcuflash_addr += len;
-    } else if (facmode && nk_fscan(args, "crc %lx %lu ", &addr, &len)) {
-        nk_printf("Calculate CRC of %lx - %lx\n", addr, addr + len);
+    } else if (facmode && nk_fscan(args, "crc %"PRIx32" %"PRIu32" ", &addr, &len)) {
+        nk_printf("Calculate CRC of %"PRIx32" - %"PRIx32"\n", addr, addr + len);
         addr = flash_crc(addr, len);
-        nk_printf("CRC is %lx\n", addr);
-    } else if (facmode && nk_fscan(args, "erase %lx %x ", &addr, &len)) {
-    	nk_printf("Erasing %lu bytes...\n", len);
+        nk_printf("CRC is %"PRIx32"\n", addr);
+    } else if (facmode && nk_fscan(args, "erase %"PRIx32" %"PRIx32" ", &addr, &len)) {
+    	nk_printf("Erasing %"PRIu32" bytes...\n", len);
         nk_mcuflash_erase(NULL, addr, len);
         nk_printf("done.\n");
-    } else if (facmode && nk_fscan(args, "erase %lx ", &addr)) {
+    } else if (facmode && nk_fscan(args, "erase %"PRIx32" ", &addr)) {
 #ifdef FLASH_PAGE_SIZE
     	len = FLASH_PAGE_SIZE;
-    	nk_printf("Erasing %lu bytes...\n", len);
+    	nk_printf("Erasing %"PRIu32" bytes...\n", len);
         nk_mcuflash_erase(NULL, addr, len);
         nk_printf("done.\n");
 #else
         nk_printf("Ooops.\n");
 #endif
-    } else if (facmode && nk_fscan(args, "fill %lx %x ", &addr, &len)) {
+    } else if (facmode && nk_fscan(args, "fill %"PRIx32" %"PRIx32" ", &addr, &len)) {
     	uint8_t buf[16];
     	uint8_t x = 0x10;
-        nk_printf("Writing %lu bytes...\n", len);
+        nk_printf("Writing %"PRIu32" bytes...\n", len);
     	while (len)
     	{
-    		uint32_t th;
+    		size_t th;
     		int n;
     		for (n = 0; n != 16; ++n)
     			buf[n] = x++;
     		if (len >= 16)
     			th = 16;
 		else
-			th = len;
+			th = (size_t)len;
 		status |= nk_mcuflash_write(NULL, addr, buf, th);
 		if (status)
 			break;
@@ -124,17 +124,17 @@ static int cmd_mcuflash(nkinfile_t *args)
 		addr += th;
     	}
         nk_printf("done.\n");
-    } else if (facmode && nk_fscan(args, "fill %lx %x %hhx ", &addr, &len, &val8)) {
+    } else if (facmode && nk_fscan(args, "fill %"PRIx32" %"PRIx32" %"PRIx8" ", &addr, &len, &val8)) {
     	uint8_t buf[16];
     	memset(buf, val8, sizeof(buf));
-        nk_printf("Writing %lu bytes...\n", len);
+        nk_printf("Writing %"PRIu32" bytes...\n", len);
     	while (len)
     	{
-    		uint32_t th;
+    		size_t th;
     		if (len >= 16)
     			th = 16;
 		else
-			th = len;
+			th = (size_t)len;
 		status |= nk_mcuflash_write(NULL, addr, buf, th);
 		if (status)
 			break;
